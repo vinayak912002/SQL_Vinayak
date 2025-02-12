@@ -16,7 +16,7 @@ ALTER TABLE cse ADD(
 );
 desc cse;
 ALTER TABLE cse drop column s_contact;
-insert into cse values(1002,'Sarthak Sambhav',100);
+insert into cse values(1002,'Vinayak Pandey',100);
 ALTER TABLE cse ADD(
     s_contact VARCHAR(200) default 9999999
 );
