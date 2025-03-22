@@ -1,0 +1,74 @@
+// 1. Find all documents where the field "item" is "Mochas"
+db.sales.find({ "item": "Mochas" });
+
+// 2. Find all items where the price is less than 15
+db.sales.find({ "price": { $lt: 15 } });
+
+// 3. Find items where the price is either less than 10 or greater than 20
+db.sales.find({ $or: [{ "price": { $lt: 10 } }, { "price": { $gt: 20 } }] });
+
+// 4. Find all documents where the "quantity" field exists
+db.sales.find({ "quantity": { $exists: true } });
+
+// 5. Find all documents where the "color" array contains the value "white"
+db.products.find({ "color": "white" });
+
+// 6. Update the RAM of the product named "xTablet" to 24
+db.products.updateOne(
+  { "name": "xTablet" },
+  { $set: { "spec.ram": 24 } }
+);
+
+// 7. Find all products and only return their "spec" field
+db.products.find({}, { "spec": 1, "_id": 0 });
+
+// 8. Find all products and sort them by their price in descending order
+db.products.find().sort({ "price": -1 });
+
+// 9. Find the first 2 products, skipping the first one
+db.products.find().skip(1).limit(2);
+
+// 10. Find all products whose name starts with "S" and price is greater than 700
+db.products.find({
+  "name": { $regex: "^S" },
+  "price": { $gt: 700 }
+});
+
+// 11. Calculate the total price of all items in the "sales" collection
+db.sales.aggregate([
+  {
+    $group: {
+      _id: null,
+      totalPrice: { $sum: { $multiply: ["$price", "$quantity"] } }
+    }
+  }
+]);
+
+// 12. Project only the "size" field for each item
+db.sales.find({}, { "size": 1, "_id": 0 });
+
+// 13. Find "Tall" size items and group them by item-wise
+db.sales.aggregate([
+  { $match: { "size": "Tall" } },
+  {
+    $group: {
+      _id: "$item",
+      totalQuantity: { $sum: "$quantity" },
+      totalSales: { $sum: { $multiply: ["$price", "$quantity"] } }
+    }
+  }
+]);
+
+// 14. Find the second item when sorted by price in ascending order
+db.sales.find().sort({ "price": 1 }).skip(1).limit(1);
+
+// 15. Group by items and calculate total number of items & average price
+db.sales.aggregate([
+  {
+    $group: {
+      _id: "$item",
+      totalItems: { $sum: 1 },
+      avgPrice: { $avg: "$price" }
+    }
+  }
+]);
